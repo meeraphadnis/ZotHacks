@@ -1,30 +1,26 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { RecipesPage } from "./pages/RecipesPage";
-// import { RecipeSlideupPopup } from "./RecipeSlideupPopup"; // optional
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import BottomNavBar from "./components/BottomNavBar";
+import HomePage from "./pages/HomePage";
+import CameraPage from "./pages/CameraPage";
+import RecipesPage from "./pages/RecipesPage";
+import ConfirmImagesPage from "./pages/ConfirmImagesPage"
+import ConfirmIngredientsPage from "./pages/ConfirmIngredientsPage";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<RecipesPage />} />
-        {/* Optional route if you have RecipeSlideupPopup */}
-        {/* <Route path="/recipe/:id" element={<RecipeSlideupPopup />} /> */}
-        <Route
-          path="*"
-          element={
-            <div className="flex flex-col items-center justify-center h-screen bg-[#e8deca] text-[#46503d]">
-              <h1 className="text-4xl font-semibold mb-4">Page Not Found</h1>
-              <Link
-                to="/"
-                className="text-lg underline hover:text-[#6b8e4e]"
-              >
-                Back to Recipes
-              </Link>
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <Router>
+      <div className="pb-16 min-h-screen bg-gray-50">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/add" element={<CameraPage />} />
+          <Route path="/recipes" element={<RecipesPage />} />
+		  <Route path="/confirmimages" element={<ConfirmImagesPage />} />
+		  <Route path="/confirmingredients" element={<ConfirmIngredientsPage/>}/>
+		</Routes>
+        <BottomNavBar />
+      </div>
+    </Router>
   );
 }
 
