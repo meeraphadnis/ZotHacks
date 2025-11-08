@@ -23,7 +23,10 @@ def analyze_image_with_gemini(file_content: bytes, mime_type: str) -> str:
         [
             {
                 "parts": [
-                    {"text": "List all food items visible in this fridge image. Respond with JSON file of items without any additional text. Each ingredient should also have an expiration date, not assuming it is fresh."},
+                    {"text": "Respond ONLY with JSON. Do not include any extra text. Each key is an ingredient and each \
+                     value is an expiration date in YYYY-MM-DD format.List all food items visible in this fridge image. \
+                     Respond with JSON file of items without any additional text. Each ingredient should also have an \
+                     expiration date, not assuming it is fresh."},
                     {"mime_type": mime_type, "data": file_content}
                 ]
             }
