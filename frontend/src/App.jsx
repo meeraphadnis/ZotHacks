@@ -1,43 +1,31 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { RecipesPage } from "./pages/RecipesPage";
+// import { RecipeSlideupPopup } from "./RecipeSlideupPopup"; // optional
 
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-
-import RandomItem from "@/components/RandomItem";
-
-/*
-This is the starting point of our application. Here, we can begin coding 
-and transforming this page into whatever best suits our needs. 
-For example, we can start by creating a login page, home page, or an about section; 
-there are many ways to get your application up and running. 
-With App.jsx, we can also define global variables and routes to store information as well as page navigation.
-*/
 function App() {
-	const [count, setCount] = useState(0);
-
-	return (
-		<>
-			<div>
-				<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank" rel="noreferrer">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-				<p>
-					Edit <code>src/App.jsx</code> and save to test HMR
-				</p>
-
-				<RandomItem maximum={1000} />
-			</div>
-			<p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-		</>
-	);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RecipesPage />} />
+        {/* Optional route if you have RecipeSlideupPopup */}
+        {/* <Route path="/recipe/:id" element={<RecipeSlideupPopup />} /> */}
+        <Route
+          path="*"
+          element={
+            <div className="flex flex-col items-center justify-center h-screen bg-[#e8deca] text-[#46503d]">
+              <h1 className="text-4xl font-semibold mb-4">Page Not Found</h1>
+              <Link
+                to="/"
+                className="text-lg underline hover:text-[#6b8e4e]"
+              >
+                Back to Recipes
+              </Link>
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
