@@ -44,7 +44,14 @@ export const RecipesPage = () => {
     <div className="min-h-screen bg-[#e8deca] py-10 px-6">
       <h1 className="text-4xl font-semibold text-[#46503d] mb-8 text-center [font-family:'Marcellus-Regular',Helvetica]">
       </h1>
-
+      style={{
+              width: "100vw",
+              minHeight: "100vh",
+              backgroundColor: "#E8DECA",
+              padding: 20,
+              boxSizing: "border-box",
+              fontFamily: "Marcellus, serif",
+            }}
       <Recipes recipes={recipes} onRecipeClick={handleViewRecipe} />
     </div>
   );
