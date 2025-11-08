@@ -1,4 +1,4 @@
-// src/components/Recipes.jsx
+src/components/Recipes.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
