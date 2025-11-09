@@ -72,7 +72,7 @@ export default function ConfirmIngredientsPage() {
       if (!response.ok) throw new Error("Failed to update ingredients");
       const data = await response.json();
       console.log("Updated ingredients:", data);
-      navigate("/potentialrecipes", { state: { ingredients } });
+      navigate("/recipes", { state: { ingredients } });
     } catch (err) {
       console.error("Error sending updated ingredients:", err);
     }

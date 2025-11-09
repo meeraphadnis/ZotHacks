@@ -27,15 +27,16 @@ export default function ConfirmImagesPage() {
     setImages((prev) => prev.filter((img) => !img.selected));
   };
 
-  // ✅ NEW: Send selected image(s) to Gemini
+  // ✅ Fixed handleAnalyze
   const handleAnalyze = async (selectedImages) => {
     try {
-      // For now, just analyze the first selected image
       const imageToAnalyze = selectedImages[0];
       if (!imageToAnalyze) {
         alert("Please select at least one image.");
         return;
       }
+
+      setLoading(true); // show overlay while analyzing
 
       // Convert base64 or blob URL → actual file
       const response = await fetch(imageToAnalyze.src);
@@ -45,27 +46,28 @@ export default function ConfirmImagesPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const uploadResponse = await fetch("http://127.0.0.1:8000/files/analyze", {
+      const analyzeResponse = await fetch("http://localhost:8000/files/analyze", {
         method: "POST",
         body: formData,
       });
 
-      if (!uploadResponse.ok) {
+      if (!analyzeResponse.ok) {
         throw new Error("Failed to analyze image");
       }
 
-      const data = await uploadResponse.json();
-      console.log("Gemini result:", data);
+      const data = await analyzeResponse.json();
+      console.log("Analysis result:", data);
 
-      // Once analysis is done, go to ConfirmIngredientsPage
-      navigate("/confirmingredients");
+      // ✅ Navigate to next page (optionally pass data via state)
+      navigate("/confirmingredients", { state: { ingredients: data } });
     } catch (err) {
       console.error("Error analyzing image:", err);
       alert("Something went wrong while analyzing the image.");
+    } finally {
+      setLoading(false); // hide overlay
     }
   };
 
-  // ✅ Updated Confirm button
   const handleConfirm = () => {
     const selected = images.filter((img) => img.selected);
     handleAnalyze(selected);
@@ -120,9 +122,15 @@ export default function ConfirmImagesPage() {
             <img
               src={img.src}
               alt="uploaded"
-              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
             />
-            {/* Circular checkbox */}
             <div
               onClick={() => toggleSelect(img.id)}
               style={{
@@ -179,13 +187,29 @@ export default function ConfirmImagesPage() {
         <div style={{ display: "flex", gap: 20 }}>
           <button
             onClick={handleDelete}
-            style={{ backgroundColor: "#E27D60", color: "#fff", border: "none", borderRadius: 12, padding: "12px 24px", cursor: "pointer", fontSize: 16 }}
+            style={{
+              backgroundColor: "#E27D60",
+              color: "#fff",
+              border: "none",
+              borderRadius: 12,
+              padding: "12px 24px",
+              cursor: "pointer",
+              fontSize: 16,
+            }}
           >
             Delete Selected
           </button>
           <button
             onClick={handleConfirm}
-            style={{ backgroundColor: "#6EBF8B", color: "#fff", border: "none", borderRadius: 12, padding: "12px 24px", cursor: "pointer", fontSize: 16 }}
+            style={{
+              backgroundColor: "#6EBF8B",
+              color: "#fff",
+              border: "none",
+              borderRadius: 12,
+              padding: "12px 24px",
+              cursor: "pointer",
+              fontSize: 16,
+            }}
           >
             Confirm
           </button>

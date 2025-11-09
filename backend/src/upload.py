@@ -16,6 +16,7 @@ async def upload_file(file: UploadFile = File(...)):
 async def analyze_fridge(file: UploadFile = File(...)):
     contents = await file.read()
     result = gemini_integration.analyze_image_with_gemini(contents, file.content_type)
+    print(result)
     if isinstance(result, bytes):
         result = result.decode("utf-8")  # Convert bytes → string
     # Debug
@@ -24,6 +25,7 @@ async def analyze_fridge(file: UploadFile = File(...)):
     items_list = json.loads(result)
     with open("fridge_items.json", "w") as f:
         json.dump(items_list, f, indent=2)
+    return items_list
 
 @router.get("/fridge_items")
 def get_fridge_items():
