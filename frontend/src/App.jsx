@@ -1,43 +1,29 @@
-import { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import BottomNavBar from "./components/BottomNavBar";
+import HomePage from "./pages/HomePage";
+import CameraPage from "./pages/CameraPage";
+import RecipesPage from "./pages/RecipesPage";
+import ConfirmImagesPage from "./pages/ConfirmImagesPage"
+import ConfirmIngredientsPage from "./pages/ConfirmIngredientsPage";
+import PotentialRecipesPage from "./pages/PotentialRecipesPage";
 
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-
-import RandomItem from "@/components/RandomItem";
-
-/*
-This is the starting point of our application. Here, we can begin coding 
-and transforming this page into whatever best suits our needs. 
-For example, we can start by creating a login page, home page, or an about section; 
-there are many ways to get your application up and running. 
-With App.jsx, we can also define global variables and routes to store information as well as page navigation.
-*/
 function App() {
-	const [count, setCount] = useState(0);
-
-	return (
-		<>
-			<div>
-				<a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank" rel="noreferrer">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-				<p>
-					Edit <code>src/App.jsx</code> and save to test HMR
-				</p>
-
-				<RandomItem maximum={1000} />
-			</div>
-			<p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-		</>
-	);
+  return (
+    <Router>
+      <div className="pb-16 min-h-screen bg-gray-50">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/add" element={<CameraPage />} />
+          <Route path="/recipes" element={<RecipesPage />} />
+		      <Route path="/confirmimages" element={<ConfirmImagesPage />} />
+		      <Route path="/confirmingredients" element={<ConfirmIngredientsPage/>}/>
+          <Route path="/potentialrecipes" element={<PotentialRecipesPage/>}/>
+		</Routes>
+        <BottomNavBar />
+      </div>
+    </Router>
+  );
 }
 
 export default App;

@@ -1,0 +1,93 @@
+{
+  "recipes": [
+    {
+      "name": "Gourmet Pan-Seared Honey-Cinnamon Banana",
+      "ingredients": [
+        {
+          "item": "Banana",
+          "quantity": "1 medium"
+        },
+        {
+          "item": "Unsalted Butter",
+          "quantity": "1 tablespoon"
+        },
+        {
+          "item": "Honey or Maple Syrup",
+          "quantity": "1 tablespoon"
+        },
+        {
+          "item": "Ground Cinnamon",
+          "quantity": "1/2 teaspoon"
+        },
+        {
+          "item": "Pinch of Salt",
+          "quantity": "1 pinch"
+        }
+      ],
+      "instructions": "Peel the banana and slice it lengthwise into two halves. Heat the butter in a small non-stick skillet over medium heat until foamy. Place the banana halves cut-side down in the skillet. Cook for 2 to 3 minutes until a golden-brown crust forms. Flip the bananas. Drizzle the honey or maple syrup over the exposed sides. Sprinkle with cinnamon and salt. Cook for 1 to 2 more minutes until the syrup is slightly caramelized and bubbling. Serve immediately, scraping the pan sauce over the bananas.",
+      "image_url": "ai_image_of_a_gourmet_pan_seared_banana_halved_and_drizzled_with_caramelized_honey_and_cinnamon_on_a_small_white_plate"
+    },
+    {
+      "name": "Velvet Banana & Peanut Butter Protein Shake",
+      "ingredients": [
+        {
+          "item": "Banana (frozen preferred)",
+          "quantity": "1 medium"
+        },
+        {
+          "item": "Milk (dairy or almond)",
+          "quantity": "1 cup"
+        },
+        {
+          "item": "Peanut Butter (or almond butter)",
+          "quantity": "2 tablespoons"
+        },
+        {
+          "item": "Vanilla Extract",
+          "quantity": "1/2 teaspoon"
+        },
+        {
+          "item": "Ice Cubes",
+          "quantity": "4 large"
+        }
+      ],
+      "instructions": "If using a fresh banana, slice it into chunks before proceeding. Combine the banana, milk, peanut butter, vanilla extract, and ice cubes in a high-powered blender. Blend starting on low speed, then increasing to high, until the mixture is completely smooth and creamy. If the mixture is too thick, add milk one tablespoon at a time until desired consistency is reached. Pour into a chilled glass and serve immediately.",
+      "image_url": "ai_image_of_a_thick_creamy_banana_and_peanut_butter_smoothie_in_a_tall_glass_with_a_straw_on_a_wooden_surface"
+    },
+    {
+      "name": "Single-Serving Banana Bread Mug Cake",
+      "ingredients": [
+        {
+          "item": "Banana (mashed)",
+          "quantity": "1 medium"
+        },
+        {
+          "item": "All-Purpose Flour",
+          "quantity": "4 tablespoons"
+        },
+        {
+          "item": "Brown Sugar",
+          "quantity": "2 tablespoons"
+        },
+        {
+          "item": "Melted Butter or Oil",
+          "quantity": "1 tablespoon"
+        },
+        {
+          "item": "Baking Powder",
+          "quantity": "1/2 teaspoon"
+        },
+        {
+          "item": "Milk",
+          "quantity": "1 tablespoon"
+        },
+        {
+          "item": "Vanilla Extract",
+          "quantity": "1/4 teaspoon"
+        }
+      ],
+      "instructions": "Mash the entire banana thoroughly in a small bowl until completely smooth. Add the brown sugar, melted butter or oil, milk, and vanilla extract to the mashed banana and mix well. In a separate bowl, whisk together the flour and baking powder. Add the dry ingredients to the wet ingredients and mix just until combined (do not overmix). Pour the batter into a large microwave-safe mug. Microwave on high for 60 to 90 seconds. The cake is done when the top appears set and springs back lightly. Allow to cool for 1 minute before eating directly from the mug.",
+      "image_url": "ai_image_of_a_small_fluffy_banana_bread_mug_cake_with_a_golden_brown_top_and_a_spoon_in_it"
+    }
+  ]
+}
