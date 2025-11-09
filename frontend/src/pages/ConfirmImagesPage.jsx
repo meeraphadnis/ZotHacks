@@ -27,23 +27,48 @@ export default function ConfirmImagesPage() {
     setImages((prev) => prev.filter((img) => !img.selected));
   };
 
-  const handleConfirm = () => {
-    const selectedImages = images.filter((img) => img.selected);
-    if (selectedImages.length === 0) {
-      alert("Please select at least one image to confirm.");
-      return;
-    }
+  // ✅ NEW: Send selected image(s) to Gemini
+  const handleAnalyze = async (selectedImages) => {
+    try {
+      // For now, just analyze the first selected image
+      const imageToAnalyze = selectedImages[0];
+      if (!imageToAnalyze) {
+        alert("Please select at least one image.");
+        return;
+      }
 
-    // Show overlay
-    setLoading(true);
+      // Convert base64 or blob URL → actual file
+      const response = await fetch(imageToAnalyze.src);
+      const blob = await response.blob();
+      const file = new File([blob], "fridge.jpg", { type: blob.type });
 
-    // Simulate backend call (TO DO: CHANGE TO BACKEND FETCH!!!)
-    setTimeout(() => {
-      navigate("/confirmingredients", {
-        state: { images: selectedImages.map((img) => img.src) },
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadResponse = await fetch("http://127.0.0.1:8000/files/analyze", {
+        method: "POST",
+        body: formData,
       });
-      setLoading(false);
-    }, 1000); // Adjust duration or replace with async API call
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to analyze image");
+      }
+
+      const data = await uploadResponse.json();
+      console.log("Gemini result:", data);
+
+      // Once analysis is done, go to ConfirmIngredientsPage
+      navigate("/confirmingredients");
+    } catch (err) {
+      console.error("Error analyzing image:", err);
+      alert("Something went wrong while analyzing the image.");
+    }
+  };
+
+  // ✅ Updated Confirm button
+  const handleConfirm = () => {
+    const selected = images.filter((img) => img.selected);
+    handleAnalyze(selected);
   };
 
   return (

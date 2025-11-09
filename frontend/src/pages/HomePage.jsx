@@ -1,31 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import IngredientItem from "../components/IngredientItem";
 
 export default function HomePage() {
-  const [ingredients, setIngredients] = useState([
-    { name: "Milk", expDate: "2025-11-10" },
-    { name: "Eggs", expDate: "2025-11-15" },
-    { name: "Spinach", expDate: "2025-11-09" },
-  ]);
-
+  const [ingredients, setIngredients] = useState([]);
   const [newIngredient, setNewIngredient] = useState("");
   const [newExpDate, setNewExpDate] = useState("");
+  const [newQuantity, setNewQuantity] = useState(1);
+  const dateInputRef = useRef(null);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/fridge-items")
+      .then(res => res.json())
+      .then(data => {
+        const arr = Object.entries(data).map(([name, info]) => ({
+          name,
+          quantity: info[0],
+          expDate: info[1] || null,
+        }));
+        setIngredients(arr);
+      });
+  }, []);
 
   const handleAdd = () => {
-    if (newIngredient && newExpDate) {
-      setIngredients([
-        ...ingredients,
-        { name: newIngredient, expDate: newExpDate },
-      ]);
-      setNewIngredient("");
-      setNewExpDate("");
+    if (newIngredient) {
+      fetch("http://localhost:8000/api/fridge-items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newIngredient,
+          quantity: newQuantity,
+          expiration: newExpDate || null,
+        }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          const arr = Object.entries(data).map(([name, info]) => ({
+            name,
+            quantity: info[0],
+            expDate: info[1] || null,
+          }));
+          setIngredients(arr);
+          setNewIngredient("");
+          setNewExpDate("");
+          setNewQuantity(1);
+        });
     }
   };
 
-  const handleDelete = (index) => {
-    const updated = [...ingredients];
-    updated.splice(index, 1);
-    setIngredients(updated);
+  // Calendar pop-up logic
+  const openCalendar = () => {
+    if (dateInputRef.current) {
+      if (typeof dateInputRef.current.showPicker === "function") {
+        dateInputRef.current.showPicker();
+      } else {
+        dateInputRef.current.focus();
+        dateInputRef.current.click();
+      }
+    }
   };
 
   return (
@@ -41,7 +72,6 @@ export default function HomePage() {
         fontFamily: "Marcellus, serif",
       }}
     >
-      {/* Ingredients Section */}
       <section style={{ marginBottom: "50px" }}>
         <h1
           style={{
@@ -54,8 +84,6 @@ export default function HomePage() {
         >
           Ingredients
         </h1>
-
-        {/* Ingredient List */}
         <div
           style={{
             display: "flex",
@@ -67,123 +95,179 @@ export default function HomePage() {
           }}
         >
           {ingredients.length > 0 ? (
-            ingredients.map((item, index) => (
+            ingredients.map(item => (
               <IngredientItem
-                key={index}
+                key={item.name}
                 name={item.name}
+                quantity={item.quantity}
                 expDate={item.expDate}
-                onDelete={() => handleDelete(index)}
+                onDelete={() => handleDelete(item.name)}
+                onIncrease={() => handleIncrease(item.name)}
+                onDecrease={() => handleDecrease(item.name)}
               />
             ))
           ) : (
-            <p
-              style={{
-                textAlign: "center",
-                color: "#6a6a6a",
-                marginTop: "30px",
-              }}
-            >
+            <p style={{ textAlign: "center", color: "#6a6a6a", marginTop: "30px" }}>
               No ingredients added yet.
             </p>
           )}
         </div>
-
-        {/* Add Ingredient Section (Moved Below) */}
+        {/* Add Ingredient Section */}
         <div
           style={{
-            marginTop: "35px",
+            marginTop: "40px",
             display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "10px",
-            paddingTop: "15px",
-            borderTop: "2px solid #d6ccb4",
+            flexDirection: "column",
+            alignItems: "center",
+            maxWidth: "700px",
+            width: "100%",
+            margin: "0 auto",
+            borderTop: "2px solid #e0d6bd",
+            paddingTop: "25px"
           }}
         >
-          <input
-            type="text"
-            value={newIngredient}
-            onChange={(e) => setNewIngredient(e.target.value)}
-            placeholder="Ingredient name"
-            style={{
-              flex: "1 1 200px",
-              padding: "10px",
-              borderRadius: "12px",
-              border: "1.5px solid #b8c1a9",
-              color: "#324a34",
-              backgroundColor: "#fffdf6",
-              fontSize: "1em",
-            }}
-          />
-          <input
-            type="date"
-            value={newExpDate}
-            onChange={(e) => setNewExpDate(e.target.value)}
-            style={{
-              flex: "1 1 150px",
-              padding: "10px",
-              borderRadius: "12px",
-              border: "1.5px solid #b8c1a9",
-              color: "#324a34",
-              backgroundColor: "#fffdf6",
-              fontSize: "1em",
-            }}
-          />
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+            gap: "8px"
+          }}>
+            <input
+              type="text"
+              value={newIngredient}
+              onChange={e => setNewIngredient(e.target.value)}
+              placeholder="Ingredient name"
+              style={{
+                flex: "1 1 120px",
+                padding: "8px",
+                borderRadius: "12px",
+                border: "1.5px solid #b8c1a9",
+                color: "#324a34",
+                backgroundColor: "#fffdf6",
+                fontSize: "1em",
+                minWidth: "80px",
+                marginRight: "8px"
+              }}
+            />
+            <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+              <button
+                type="button"
+                onClick={() => setNewQuantity(Math.max(1, newQuantity - 1))}
+                style={{
+                  padding: "1px 5px",
+                  borderRadius: "4px",
+                  border: "none",
+                  backgroundColor: "#ececec",
+                  color: "#324a34",
+                  fontWeight: "bold",
+                  fontSize: "1.15em",
+                  cursor: "pointer",
+                  minWidth: "22px",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <rect x="6" y="11" width="12" height="2" rx="1" fill="#324a34"/>
+                </svg>
+              </button>
+              <span style={{
+                display: "inline-block",
+                width: "28px",
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: "1.1em",
+                color: "#324a34",
+                background: "transparent"
+              }}>
+                {newQuantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setNewQuantity(newQuantity + 1)}
+                style={{
+                  padding: "1px 5px",
+                  borderRadius: "4px",
+                  border: "none",
+                  backgroundColor: "#ececec",
+                  color: "#324a34",
+                  fontWeight: "bold",
+                  fontSize: "1.15em",
+                  cursor: "pointer",
+                  minWidth: "22px",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <rect x="6" y="11" width="12" height="2" rx="1" fill="#324a34"/>
+                  <rect x="11" y="6" width="2" height="12" rx="1" fill="#324a34"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          {/* Expiration input and calendar picker to the right */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            margin: "13px 0 0 0",
+            width: "100%"
+          }}>
+            <input
+              ref={dateInputRef}
+              type="date"
+              value={newExpDate}
+              onChange={e => setNewExpDate(e.target.value)}
+              placeholder="Expiration (optional)"
+              style={{
+                flex: "1 1 190px",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "1.5px solid #b8c1a9",
+                color: "#324a34",
+                backgroundColor: "#fffdf6",
+                fontSize: "1.15em",
+                minWidth: "145px",
+                outline: "none",
+                marginRight: "4px"
+              }}
+            />
+            <button
+              type="button"
+              onClick={openCalendar}
+              style={{
+                background: "none",
+                border: "none",
+                padding: "0 0 0 6px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center"
+              }}
+              aria-label="Pick Expiration Date"
+            >
+              <svg width="27" height="27" fill="none" viewBox="0 0 24 24">
+                <rect x="3" y="6" width="18" height="15" rx="3" fill="#b8c1a9"/>
+                <rect x="3" y="4" width="18" height="4" rx="1.5" fill="#324a34"/>
+                <rect x="7" y="0" width="2" height="8" rx="1" fill="#324a34"/>
+                <rect x="15" y="0" width="2" height="8" rx="1" fill="#324a34"/>
+              </svg>
+            </button>
+          </div>
+          {/* Big Add button below */}
           <button
             onClick={handleAdd}
             style={{
               backgroundColor: "#6EBF8B",
               color: "#fffdf6",
               border: "none",
-              borderRadius: "12px",
-              padding: "10px 20px",
+              borderRadius: "18px",
+              padding: "18px 40px",
               fontWeight: "bold",
-              fontSize: "1em",
+              fontSize: "1.25em",
               cursor: "pointer",
               transition: "0.2s ease",
+              marginTop: "18px"
             }}
           >
             Add
           </button>
-        </div>
-      </section>
-
-      {/* Recently Cooked Section */}
-      <section>
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "bold",
-            color: "#324a34",
-            textAlign: "center",
-            margin: "30px 0 15px",
-          }}
-        >
-          Recently Cooked
-        </h2>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#fffdf6",
-              borderRadius: "15px",
-              padding: "10px 15px",
-              width: "90%",
-              textAlign: "center",
-              color: "#6a6a6a",
-              fontSize: "0.95em",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-            }}
-          >
-            You haven’t cooked anything yet!
-          </div>
         </div>
       </section>
     </div>
