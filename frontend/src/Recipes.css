@@ -22,10 +22,11 @@
 
 .recipe-card {
   width: 300px;
-  background-color: #9cb87a;
+  height: 400px; /* fixed height */
+  background-color: #6EBF8B;
   border-radius: 1rem;
   border: 1px solid black;
-  overflow: hidden;
+  overflow: hidden; /* hides anything that exceeds height */
   text-decoration: none;
   color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -54,5 +55,219 @@
 
 .recipe-detail {
   font-size: 0.875rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.instructions-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6EBF8B;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.recipe-instructions {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-line;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+/* Modal container */
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 1rem;
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Close button top-left */
+.modal-close-left {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #333;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Modal image */
+.modal-image {
+  width: 50%;
+  height: 150px;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+  border-radius: 1rem;
+}
+
+/* Modal info */
+.modal-info {
+  padding-top: 0.5rem;
+}
+
+/* Layout for Calories + Cook Time + Cooked button */
+.modal-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Cooked button style */
+.cooked-button {
+  background-color: #6EBF8B;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.cooked-button:hover {
+  background-color: #6EBF8B;
+}
+
+/* Submodal (smaller modal) */
+.submodal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.submodal-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  width: 85%;
+  max-width: 350px;
+  min-height: 280px; /* slightly taller vertically */
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+/* Ingredients list inside submodal */
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+/* Header row above ingredients list */
+.ingredients-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 1rem;
+  font-weight: 600;
+  color: #6EBF8B;
+  font-size: 0.95rem;
+  border-bottom: 2px solid #dcdcdc;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.ingredient-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #f4f4f4;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.ingredient-qty {
+  font-weight: 600;
+  color: #6EBF8B;
+}
+
+/* --- Buttons section --- */
+.submodal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+/* Shared button style */
+.submodal-button {
+  background: #6EBF8B;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+  min-width: 100px; /* ensures equal size */
+  text-align: center;
+}
+
+/* Close button variant */
+.close-submodal {
+  background: #6EBF8B;
+}
+
+.close-submodal:hover {
+  background: #86a463;
+}
+
+/* Confirm button variant */
+.confirm-submodal {
+  background: #6EBF8B; /* slightly darker */
+}
+
+.confirm-submodal:hover {
+  background: #708a54;
+}
+
+.submodal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
 }
