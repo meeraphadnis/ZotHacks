@@ -1,6 +1,8 @@
 import random
 from fastapi import FastAPI
 from upload import router as upload_router
+from gemini_integration import generate_recipes_with_gemini
+import json
 
 app = FastAPI()
 
@@ -28,3 +30,21 @@ async def get_random_item(maximum: int) -> dict[str, int]:
 @app.get("/test")
 async def test_endpoint() -> dict[str, str]:
     return {"status": "Test endpoint is working!"}
+
+from typing import List, Dict
+
+@app.post("/get-recipes")
+async def get_recipes(fridge_items: List[Dict]):
+    # Convert list to dictionary
+    selected_dict = {item["name"]: {"quantity": item["quantity"], "expiration": item["expiration"]}
+                     for item in fridge_items if item["quantity"] > 0}
+    recipes_json = generate_recipes_with_gemini(selected_dict)
+    print("Gemini raw response:", recipes_json)
+    # Strip code fences if present
+    import re
+    recipes_json_clean = re.sub(r"^```(?:json)?\s*|```$", "", recipes_json.strip())
+    # Load JSON
+    recipes = json.loads(recipes_json_clean)
+    with open("recipes.json", "w", encoding="utf-8") as f:
+        json.dump(recipes, f, ensure_ascii=False, indent=2)
+    return {"recipes": recipes["recipes"]}
