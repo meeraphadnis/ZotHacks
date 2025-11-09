@@ -1,31 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IngredientItem from "../components/IngredientItem";
 
 export default function HomePage() {
-  const [ingredients, setIngredients] = useState([
-    { name: "Milk", expDate: "2025-11-10" },
-    { name: "Eggs", expDate: "2025-11-15" },
-    { name: "Spinach", expDate: "2025-11-09" },
-  ]);
-
+  const [ingredients, setIngredients] = useState([]);
   const [newIngredient, setNewIngredient] = useState("");
   const [newExpDate, setNewExpDate] = useState("");
 
+  // Fetch ingredients from backend on first load
+  useEffect(() => {
+    fetch("http://localhost:8000/api/fridge-items")
+      .then(res => res.json())
+      .then(data => {
+        console.log("Fetched ingredients:", data);  // <--- ADD THIS LINE
+        // Convert {Milk: "...", Eggs: "..."} to [{name, expDate}, ...]
+        const arr = Object.entries(data).map(([name, expDate]) => ({
+          name,
+          expDate,
+        }));
+        setIngredients(arr);
+      });
+  }, []);  
+
+  // Add ingredient and refresh from backend
   const handleAdd = () => {
     if (newIngredient && newExpDate) {
-      setIngredients([
-        ...ingredients,
-        { name: newIngredient, expDate: newExpDate },
-      ]);
-      setNewIngredient("");
-      setNewExpDate("");
+      fetch("http://localhost:8000/api/fridge-items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newIngredient, expiration: newExpDate })
+      })
+        .then(res => res.json())
+        .then(data => {
+          const arr = Object.entries(data).map(([name, expDate]) => ({
+            name,
+            expDate,
+          }));
+          setIngredients(arr);
+          setNewIngredient("");
+          setNewExpDate("");
+        });
     }
   };
 
-  const handleDelete = (index) => {
-    const updated = [...ingredients];
-    updated.splice(index, 1);
-    setIngredients(updated);
+  // Delete ingredient and refresh from backend
+  const handleDelete = (name) => {
+    fetch(`http://localhost:8000/api/fridge-items/${encodeURIComponent(name)}`, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(data => {
+        const arr = Object.entries(data).map(([name, expDate]) => ({
+          name,
+          expDate,
+        }));
+        setIngredients(arr);
+      });
   };
 
   return (
@@ -41,7 +70,6 @@ export default function HomePage() {
         fontFamily: "Marcellus, serif",
       }}
     >
-      {/* Ingredients Section */}
       <section style={{ marginBottom: "50px" }}>
         <h1
           style={{
@@ -55,7 +83,6 @@ export default function HomePage() {
           Ingredients
         </h1>
 
-        {/* Ingredient List */}
         <div
           style={{
             display: "flex",
@@ -67,12 +94,12 @@ export default function HomePage() {
           }}
         >
           {ingredients.length > 0 ? (
-            ingredients.map((item, index) => (
+            ingredients.map(item => (
               <IngredientItem
-                key={index}
+                key={item.name}
                 name={item.name}
                 expDate={item.expDate}
-                onDelete={() => handleDelete(index)}
+                onDelete={() => handleDelete(item.name)}
               />
             ))
           ) : (
@@ -88,7 +115,6 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Add Ingredient Section (Moved Below) */}
         <div
           style={{
             marginTop: "35px",
@@ -145,45 +171,6 @@ export default function HomePage() {
           >
             Add
           </button>
-        </div>
-      </section>
-
-      {/* Recently Cooked Section */}
-      <section>
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "bold",
-            color: "#324a34",
-            textAlign: "center",
-            margin: "30px 0 15px",
-          }}
-        >
-          Recently Cooked
-        </h2>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#fffdf6",
-              borderRadius: "15px",
-              padding: "10px 15px",
-              width: "90%",
-              textAlign: "center",
-              color: "#6a6a6a",
-              fontSize: "0.95em",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-            }}
-          >
-            You haven’t cooked anything yet!
-          </div>
         </div>
       </section>
     </div>
