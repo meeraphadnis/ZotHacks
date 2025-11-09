@@ -108,3 +108,8 @@ async def get_recipes(fridge_items: List[Dict]):
     with open("recipes.json", "w", encoding="utf-8") as f:
         json.dump(recipes, f, ensure_ascii=False, indent=2)
     return {"recipes": recipes["recipes"]}
+
+@app.get("/api/recipes")
+async def get_recipes():
+    with open("recipes.json") as f:
+        return json.load(f)
