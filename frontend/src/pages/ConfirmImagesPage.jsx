@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Check } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
 
 export default function ConfirmImagesPage() {
   const location = useLocation();
@@ -37,9 +37,35 @@ export default function ConfirmImagesPage() {
         padding: "20px",
         boxSizing: "border-box",
         fontFamily: "Marcellus, serif",
+        position: "relative",
       }}
     >
-      <h2 style={{ textAlign: "center", marginBottom: 20 }}>Confirm Your Images</h2>
+      {/* Header with back arrow */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: 20,
+        }}
+      >
+        <button
+          onClick={() => navigate("/add")}
+          style={{
+            background: "none",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+            marginRight: 10,
+          }}
+        >
+          <ArrowLeft size={28} color="#7A6D5F" />
+        </button>
+        <h2 style={{ flex: 1, textAlign: "center", margin: 0 }}>
+          Confirm Your Images
+        </h2>
+        {/* Placeholder to keep header centered */}
+        <div style={{ width: 38 }} /> {/* Same width as ArrowLeft to balance */}
+      </div>
 
       {/* Images grid */}
       <div
@@ -75,10 +101,10 @@ export default function ConfirmImagesPage() {
                 objectFit: "cover",
               }}
             />
-                {/* Circular checkbox */}
+            {/* Circular checkbox */}
             <div
-            onClick={() => toggleSelect(img.id)}
-            style={{
+              onClick={() => toggleSelect(img.id)}
+              style={{
                 position: "absolute",
                 top: 5,
                 right: 5,
@@ -91,13 +117,12 @@ export default function ConfirmImagesPage() {
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-            }}
+              }}
             >
-            {img.selected && <Check size={16} color="#E8DECA" />}
+              {img.selected && <Check size={16} color="#E8DECA" />}
             </div>
-        </div>
+          </div>
         ))}
-
       </div>
 
       {/* Bottom buttons (fixed) */}
