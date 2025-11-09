@@ -18,15 +18,25 @@ export default function ConfirmImagesPage() {
     );
   };
 
+  const selectAllImages = () => {
+    setImages((prev) => prev.map((img) => ({ ...img, selected: true })));
+  };
+
   const handleDelete = () => {
     setImages((prev) => prev.filter((img) => !img.selected));
   };
 
   const handleConfirm = () => {
-    navigate("/confirmingredients", {
-      state: { images: images.map((img) => img.src) },
-    });
-  };
+  const selectedImages = images.filter(img => img.selected);
+  if (selectedImages.length === 0) {
+    alert("Please select at least one image to confirm.");
+    return;
+  }
+  navigate("/confirmingredients", {
+    state: { images: selectedImages.map((img) => img.src) },
+  });
+};
+
 
   return (
     <div
@@ -125,7 +135,7 @@ export default function ConfirmImagesPage() {
         ))}
       </div>
 
-      {/* Bottom buttons (fixed) */}
+      {/* Bottom buttons container */}
       <div
         style={{
           position: "fixed",
@@ -133,37 +143,60 @@ export default function ConfirmImagesPage() {
           left: "50%",
           transform: "translateX(-50%)",
           display: "flex",
-          gap: 20,
+          flexDirection: "column",
+          gap: 10,
+          alignItems: "center",
         }}
       >
+        {/* Select All Images button */}
         <button
-          onClick={handleDelete}
+          onClick={selectAllImages}
           style={{
-            backgroundColor: "#E27D60",
+            backgroundColor: "#9088888B",
             color: "#fff",
             border: "none",
             borderRadius: 12,
             padding: "12px 24px",
             cursor: "pointer",
             fontSize: 16,
+            width: 250,
+            textAlign: "center",
           }}
         >
-          Delete Selected
+          Select All Images
         </button>
-        <button
-          onClick={handleConfirm}
-          style={{
-            backgroundColor: "#6EBF8B",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            padding: "12px 24px",
-            cursor: "pointer",
-            fontSize: 16,
-          }}
-        >
-          Confirm
-        </button>
+
+        {/* other buttons buttons */}
+        <div style={{ display: "flex", gap: 20 }}>
+          <button
+            onClick={handleDelete}
+            style={{
+              backgroundColor: "#E27D60",
+              color: "#fff",
+              border: "none",
+              borderRadius: 12,
+              padding: "12px 24px",
+              cursor: "pointer",
+              fontSize: 16,
+            }}
+          >
+            Delete Selected
+          </button>
+          <button
+            onClick={handleConfirm}
+            style={{
+              backgroundColor: "#6EBF8B",
+              color: "#fff",
+              border: "none",
+              borderRadius: 12,
+              padding: "12px 24px",
+              cursor: "pointer",
+              fontSize: 16,
+            }}
+          >
+            Confirm
+          </button>
+        </div>
       </div>
     </div>
   );
