@@ -1,15 +1,12 @@
 import random
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from upload import router as upload_router
 import json
 from fastapi.responses import PlainTextResponse
-from fastapi import Request, HTTPException
-
-
+from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI()
-
-from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,30 +31,38 @@ async def get_random_item(maximum: int) -> dict[str, int]:
 async def test_endpoint() -> dict[str, str]:
     return {"status": "Test endpoint is working!"}
 
-DATA_FILE = "../fridge_items.json"
-
-@app.get("/api/fridge-items")
-async def get_fridge_items():
-    with open(DATA_FILE, "r") as f:
-        data = json.load(f)
-    return data  # FastAPI will send this as a JSON response
+DATA_FILE = "./fridge_items.json"
 
 def load_data():
-    with open(DATA_FILE) as f:
-        return json.load(f)
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE) as f:
+            return json.load(f)
+    return {}
 
 def save_data(data):
     with open(DATA_FILE, "w") as f:
         json.dump(data, f)
 
+@app.get("/api/fridge-items")
+async def get_fridge_items():
+    data = load_data()
+    return data  # FastAPI will send this as a JSON response
+
 @app.post("/api/fridge-items")
 async def add_ingredient(item: dict):
     data = load_data()
-    name = item["name"]
-    expiration = item["expiration"]
-    data[name] = expiration
-    save_data(data)
-    return data
+    name = item.get("name")
+    try:
+        quantity = int(item.get("quantity", 1))
+    except Exception:
+        quantity = 1
+    expiration = item.get("expiration")   # Allow missing/None values
+    if name:   # expiration is now optional
+        data[name] = [quantity, expiration]
+        save_data(data)
+        return data
+    raise HTTPException(status_code=400, detail="Invalid ingredient")
+
 
 @app.delete("/api/fridge-items/{name}")
 async def delete_ingredient(name: str):
@@ -67,3 +72,19 @@ async def delete_ingredient(name: str):
         save_data(data)
         return data
     raise HTTPException(status_code=404, detail="Ingredient not found")
+
+@app.put("/api/fridge-items/{name}/increase")
+async def increase_quantity(name: str):
+    data = load_data()
+    if name in data:
+        data[name][0] = int(data[name][0]) + 1  # Ensure int before increment
+        save_data(data)
+    return data
+
+@app.put("/api/fridge-items/{name}/decrease")
+async def decrease_quantity(name: str):
+    data = load_data()
+    if name in data and int(data[name][0]) > 1:
+        data[name][0] = int(data[name][0]) - 1  # Ensure int before decrement
+        save_data(data)
+    return data
