@@ -1,73 +1,99 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Recipes } from "../components/Recipes";
+import { Modal } from "../components/Modal";
 
-export const RecipesPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Get fridge items from previous page via router state
-  const fridgeItems = location.state?.fridgeItems || [];
-
+export default function RecipesPage() {
   const [recipes, setRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      if (fridgeItems.length === 0) {
-        setError("No ingredients selected.");
+    fetch("http://localhost:8000/api/recipes")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load recipes.");
+        return res.json();
+      })
+      .then(data => {
+        setRecipes(data.recipes || []);
         setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:8000/get-recipes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(fridgeItems),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch recipes from backend.");
-        }
-
-        const data = await response.json();
-        setRecipes(data.recipes);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
+      })
+      .catch(err => {
         setLoading(false);
-      }
-    };
-
-    fetchRecipes();
-  }, [fridgeItems]);
-
-  const handleViewRecipe = (recipeId) => {
-    navigate(`/recipe/${recipeId}`, { state: { recipes } });
-  };
-
-  if (loading) return <div className="text-center mt-20">Loading recipes...</div>;
-  if (error) return <div className="text-center mt-20 text-red-500">Error: {error}</div>;
+        alert("Could not load recipes: " + err.message);
+      });
+  }, []);
 
   return (
     <div
-      className="min-h-screen bg-[#e8deca] py-10 px-6"
       style={{
-        width: "100vw",
         minHeight: "100vh",
-        padding: 20,
-        boxSizing: "border-box",
+        background: "#e8deca",
         fontFamily: "Marcellus, serif",
+        padding: 30,
       }}
     >
-      <h1 className="text-4xl font-semibold text-[#46503d] mb-8 text-center">
+      <h1 style={{
+        fontSize: "2rem",
+        fontWeight: "bold",
+        color: "#46503d",
+        textAlign: "center",
+        marginBottom: 30
+      }}>
         Recipes
       </h1>
-
-      <Recipes recipes={recipes} onRecipeClick={handleViewRecipe} />
+      {loading && <div style={{textAlign: "center", marginTop: 40}}>Loading recipes...</div>}
+      <div style={{
+        maxWidth: 650, margin: "0 auto",
+        display: "flex", flexDirection: "column", gap: "15px"
+      }}>
+        {recipes.map(recipe => (
+          <div
+            key={recipe.name}
+            style={{
+              cursor: "pointer",
+              background: "#fffdf6",
+              borderRadius: "14px",
+              padding: "17px",
+              boxShadow: "0 1px 4px rgba(0,0,0,.09)",
+              fontWeight: 500,
+              letterSpacing: 0.1,
+              fontSize: "1.1rem",
+              color: "#324a34"
+            }}
+            onClick={() => setSelectedRecipe(recipe)}
+          >
+            {recipe.name}
+          </div>
+        ))}
+      </div>
+      <Modal show={!!selectedRecipe} onClose={() => setSelectedRecipe(null)}>
+        {selectedRecipe && (
+          <div>
+            <h2 style={{
+              fontWeight: 700,
+              marginTop: 0,
+              marginBottom: 13,
+              color: "#46503d"
+            }}>{selectedRecipe.name}</h2>
+            {selectedRecipe.image_url &&
+              <img src={selectedRecipe.image_url} alt={selectedRecipe.name}
+                style={{
+                  width: "100%", borderRadius: 12, marginBottom: 13, maxHeight: 170, objectFit: "cover"
+                }}
+              />
+            }
+            <h4 style={{marginBottom: 7}}>Ingredients</h4>
+            <ul>
+              {selectedRecipe.ingredients.map((ing, idx) =>
+                <li key={idx}>{ing.item}: {ing.quantity}</li>
+              )}
+            </ul>
+            <h4 style={{marginTop: 17, marginBottom: 7}}>Instructions</h4>
+            <div style={{whiteSpace: "pre-line", fontSize: "1.02em"}}>
+              {selectedRecipe.instructions}
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
-};
+}
