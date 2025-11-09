@@ -6,7 +6,6 @@ import CameraPage from "./pages/CameraPage";
 import RecipesPage from "./pages/RecipesPage";
 import ConfirmImagesPage from "./pages/ConfirmImagesPage"
 import ConfirmIngredientsPage from "./pages/ConfirmIngredientsPage";
-import PotentialRecipesPage from "./pages/PotentialRecipesPage";
 
 function App() {
   return (
@@ -18,7 +17,6 @@ function App() {
           <Route path="/recipes" element={<RecipesPage />} />
 		      <Route path="/confirmimages" element={<ConfirmImagesPage />} />
 		      <Route path="/confirmingredients" element={<ConfirmIngredientsPage/>}/>
-          <Route path="/potentialrecipes" element={<PotentialRecipesPage/>}/>
 		</Routes>
         <BottomNavBar />
       </div>

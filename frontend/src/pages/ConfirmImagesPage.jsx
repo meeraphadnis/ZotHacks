@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Check } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 export default function ConfirmImagesPage() {
   const location = useLocation();
@@ -10,11 +11,16 @@ export default function ConfirmImagesPage() {
   const [images, setImages] = useState(
     initialImages.map((img, index) => ({ id: index, src: img, selected: false }))
   );
+  const [loading, setLoading] = useState(false);
 
   const toggleSelect = (id) => {
     setImages((prev) =>
       prev.map((img) => (img.id === id ? { ...img, selected: !img.selected } : img))
     );
+  };
+
+  const selectAllImages = () => {
+    setImages((prev) => prev.map((img) => ({ ...img, selected: true })));
   };
 
   const handleDelete = () => {
@@ -74,9 +80,20 @@ export default function ConfirmImagesPage() {
         padding: "20px",
         boxSizing: "border-box",
         fontFamily: "Marcellus, serif",
+        position: "relative",
       }}
     >
-      <h2 style={{ textAlign: "center", marginBottom: 20 }}>Confirm Your Images</h2>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
+        <button
+          onClick={() => navigate("/add")}
+          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", marginRight: 10 }}
+        >
+          <ArrowLeft size={28} color="#7A6D5F" />
+        </button>
+        <h2 style={{ flex: 1, textAlign: "center", margin: 0 }}>Confirm Your Images</h2>
+        <div style={{ width: 38 }} />
+      </div>
 
       {/* Images grid */}
       <div
@@ -103,14 +120,7 @@ export default function ConfirmImagesPage() {
             <img
               src={img.src}
               alt="uploaded"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }}
             />
             {/* Circular checkbox */}
             <div
@@ -144,38 +154,46 @@ export default function ConfirmImagesPage() {
           left: "50%",
           transform: "translateX(-50%)",
           display: "flex",
-          gap: 20,
+          flexDirection: "column",
+          gap: 10,
+          alignItems: "center",
         }}
       >
         <button
-          onClick={handleDelete}
+          onClick={selectAllImages}
           style={{
-            backgroundColor: "#E27D60",
+            backgroundColor: "#9088888B",
             color: "#fff",
             border: "none",
             borderRadius: 12,
             padding: "12px 24px",
             cursor: "pointer",
             fontSize: 16,
+            width: 250,
+            textAlign: "center",
           }}
         >
-          Delete Selected
+          Select All Images
         </button>
-        <button
-          onClick={handleConfirm}
-          style={{
-            backgroundColor: "#6EBF8B",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            padding: "12px 24px",
-            cursor: "pointer",
-            fontSize: 16,
-          }}
-        >
-          Confirm
-        </button>
+
+        <div style={{ display: "flex", gap: 20 }}>
+          <button
+            onClick={handleDelete}
+            style={{ backgroundColor: "#E27D60", color: "#fff", border: "none", borderRadius: 12, padding: "12px 24px", cursor: "pointer", fontSize: 16 }}
+          >
+            Delete Selected
+          </button>
+          <button
+            onClick={handleConfirm}
+            style={{ backgroundColor: "#6EBF8B", color: "#fff", border: "none", borderRadius: 12, padding: "12px 24px", cursor: "pointer", fontSize: 16 }}
+          >
+            Confirm
+          </button>
+        </div>
       </div>
+
+      {/* Loading overlay */}
+      <LoadingOverlay visible={loading} />
     </div>
   );
 }
