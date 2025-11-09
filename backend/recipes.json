@@ -1,93 +1,73 @@
 {
   "recipes": [
     {
-      "name": "Gourmet Pan-Seared Honey-Cinnamon Banana",
+      "name": "Classic Roasted Chicken Salad Bowl",
       "ingredients": [
         {
-          "item": "Banana",
-          "quantity": "1 medium"
+          "name": "Roasted Chicken",
+          "quantity": "One-third of the whole chicken, shredded"
         },
         {
-          "item": "Unsalted Butter",
-          "quantity": "1 tablespoon"
+          "name": "Shredded Salad Mix",
+          "quantity": "Half of the container"
         },
         {
-          "item": "Honey or Maple Syrup",
-          "quantity": "1 tablespoon"
+          "name": "Large Tomatoes",
+          "quantity": "2, diced"
         },
         {
-          "item": "Ground Cinnamon",
-          "quantity": "1/2 teaspoon"
-        },
-        {
-          "item": "Pinch of Salt",
-          "quantity": "1 pinch"
+          "name": "Cherry Tomatoes",
+          "quantity": "5, halved"
         }
       ],
-      "instructions": "Peel the banana and slice it lengthwise into two halves. Heat the butter in a small non-stick skillet over medium heat until foamy. Place the banana halves cut-side down in the skillet. Cook for 2 to 3 minutes until a golden-brown crust forms. Flip the bananas. Drizzle the honey or maple syrup over the exposed sides. Sprinkle with cinnamon and salt. Cook for 1 to 2 more minutes until the syrup is slightly caramelized and bubbling. Serve immediately, scraping the pan sauce over the bananas.",
-      "image_url": "ai_image_of_a_gourmet_pan_seared_banana_halved_and_drizzled_with_caramelized_honey_and_cinnamon_on_a_small_white_plate"
+      "instructions": "1. Shred the meat from one-third of the roasted chicken, discarding skin and bones. 2. In a large bowl, combine half of the Shredded Salad Mix and the two diced Large Tomatoes. 3. Add the five halved Cherry Tomatoes to the mixture. 4. Place the shredded roasted chicken on top of the salad mixture. 5. Toss gently before serving to ensure even distribution of ingredients.",
+      "image_url": "https://ai.image.url/classic_chicken_salad_mix"
     },
     {
-      "name": "Velvet Banana & Peanut Butter Protein Shake",
+      "name": "Chicken and Cherry Tomato Stuffed Tomatoes",
       "ingredients": [
         {
-          "item": "Banana (frozen preferred)",
-          "quantity": "1 medium"
+          "name": "Roasted Chicken",
+          "quantity": "One-third of the whole chicken, finely diced"
         },
         {
-          "item": "Milk (dairy or almond)",
-          "quantity": "1 cup"
+          "name": "Large Tomatoes",
+          "quantity": "3, tops cut off and hollowed"
         },
         {
-          "item": "Peanut Butter (or almond butter)",
-          "quantity": "2 tablespoons"
+          "name": "Shredded Salad Mix",
+          "quantity": "A quarter of the container, minced"
         },
         {
-          "item": "Vanilla Extract",
-          "quantity": "1/2 teaspoon"
-        },
-        {
-          "item": "Ice Cubes",
-          "quantity": "4 large"
+          "name": "Cherry Tomatoes",
+          "quantity": "5, finely chopped"
         }
       ],
-      "instructions": "If using a fresh banana, slice it into chunks before proceeding. Combine the banana, milk, peanut butter, vanilla extract, and ice cubes in a high-powered blender. Blend starting on low speed, then increasing to high, until the mixture is completely smooth and creamy. If the mixture is too thick, add milk one tablespoon at a time until desired consistency is reached. Pour into a chilled glass and serve immediately.",
-      "image_url": "ai_image_of_a_thick_creamy_banana_and_peanut_butter_smoothie_in_a_tall_glass_with_a_straw_on_a_wooden_surface"
+      "instructions": "1. Prepare the stuffing: Finely dice the meat from one-third of the roasted chicken. Mix it thoroughly with the five finely chopped Cherry Tomatoes. 2. Prepare the shells: Carefully cut the tops off the three Large Tomatoes and scoop out the pulp, creating sturdy shells. 3. Lightly press a small amount of the minced Shredded Salad Mix into the bottom of each hollow tomato shell for a base. 4. Fill each Large Tomato shell generously with the chicken and cherry tomato stuffing. 5. Serve immediately as a fresh appetizer or light meal.",
+      "image_url": "https://ai.image.url/stuffed_chicken_tomatoes_appetizer"
     },
     {
-      "name": "Single-Serving Banana Bread Mug Cake",
+      "name": "Carved Chicken Platter with Layered Tomato Salad",
       "ingredients": [
         {
-          "item": "Banana (mashed)",
-          "quantity": "1 medium"
+          "name": "Roasted Chicken",
+          "quantity": "Remaining one-third of the whole chicken, carved"
         },
         {
-          "item": "All-Purpose Flour",
-          "quantity": "4 tablespoons"
+          "name": "Large Tomatoes",
+          "quantity": "1, sliced thinly"
         },
         {
-          "item": "Brown Sugar",
-          "quantity": "2 tablespoons"
+          "name": "Cherry Tomatoes",
+          "quantity": "Remaining 5, halved"
         },
         {
-          "item": "Melted Butter or Oil",
-          "quantity": "1 tablespoon"
-        },
-        {
-          "item": "Baking Powder",
-          "quantity": "1/2 teaspoon"
-        },
-        {
-          "item": "Milk",
-          "quantity": "1 tablespoon"
-        },
-        {
-          "item": "Vanilla Extract",
-          "quantity": "1/4 teaspoon"
+          "name": "Shredded Salad Mix",
+          "quantity": "Remaining quarter of the container"
         }
       ],
-      "instructions": "Mash the entire banana thoroughly in a small bowl until completely smooth. Add the brown sugar, melted butter or oil, milk, and vanilla extract to the mashed banana and mix well. In a separate bowl, whisk together the flour and baking powder. Add the dry ingredients to the wet ingredients and mix just until combined (do not overmix). Pour the batter into a large microwave-safe mug. Microwave on high for 60 to 90 seconds. The cake is done when the top appears set and springs back lightly. Allow to cool for 1 minute before eating directly from the mug.",
-      "image_url": "ai_image_of_a_small_fluffy_banana_bread_mug_cake_with_a_golden_brown_top_and_a_spoon_in_it"
+      "instructions": "1. Carefully carve the final third of the roasted chicken into appealing serving slices or quarters. Arrange the pieces on a serving platter. 2. Slice the remaining Large Tomato thinly and arrange the slices around the carved chicken pieces. 3. In a small bowl, combine the remaining Shredded Salad Mix and the five halved Cherry Tomatoes. 4. Layer this salad mixture attractively over and around the chicken and tomato slices, using it as a fresh, crisp garnish. 5. Serve the platter immediately, allowing the components to be combined on individual plates.",
+      "image_url": "https://ai.image.url/carved_chicken_tomato_platter_fresh"
     }
   ]
 }

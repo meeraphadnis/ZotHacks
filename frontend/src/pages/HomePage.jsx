@@ -1,24 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
 import IngredientItem from "../components/IngredientItem";
+import { Modal } from "../components/Modal";
 
 export default function HomePage() {
   const [ingredients, setIngredients] = useState([]);
   const [newIngredient, setNewIngredient] = useState("");
   const [newExpDate, setNewExpDate] = useState("");
   const [newQuantity, setNewQuantity] = useState(1);
+  const [cookedRecipes, setCookedRecipes] = useState([]);
+  const [selectedCookedRecipe, setSelectedCookedRecipe] = useState(null);
   const dateInputRef = useRef(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/api/fridge-items")
       .then(res => res.json())
-      .then(data => {
-        const arr = Object.entries(data).map(([name, info]) => ({
-          name,
-          quantity: info[0],
-          expDate: info[1] || null,
-        }));
-        setIngredients(arr);
-      });
+      .then(data => setIngredients(data || []));
+    fetch("http://localhost:8000/api/cooked-recipes")
+      .then(res => res.json())
+      .then(data => setCookedRecipes(data || []));
   }, []);
 
   const handleAdd = () => {
@@ -34,12 +33,7 @@ export default function HomePage() {
       })
         .then(res => res.json())
         .then(data => {
-          const arr = Object.entries(data).map(([name, info]) => ({
-            name,
-            quantity: info[0],
-            expDate: info[1] || null,
-          }));
-          setIngredients(arr);
+          setIngredients(data || []);
           setNewIngredient("");
           setNewExpDate("");
           setNewQuantity(1);
@@ -47,7 +41,6 @@ export default function HomePage() {
     }
   };
 
-  // Calendar pop-up logic
   const openCalendar = () => {
     if (dateInputRef.current) {
       if (typeof dateInputRef.current.showPicker === "function") {
@@ -57,6 +50,30 @@ export default function HomePage() {
         dateInputRef.current.click();
       }
     }
+  };
+
+  const handleDelete = name => {
+    fetch(`http://localhost:8000/api/fridge-items/${encodeURIComponent(name)}`, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(data => setIngredients(data || []));
+  };
+
+  const handleIncrease = name => {
+    fetch(`http://localhost:8000/api/fridge-items/${encodeURIComponent(name)}/increase`, {
+      method: "PUT"
+    })
+      .then(res => res.json())
+      .then(data => setIngredients(data || []));
+  };
+
+  const handleDecrease = name => {
+    fetch(`http://localhost:8000/api/fridge-items/${encodeURIComponent(name)}/decrease`, {
+      method: "PUT"
+    })
+      .then(res => res.json())
+      .then(data => setIngredients(data || []));
   };
 
   return (
@@ -72,35 +89,32 @@ export default function HomePage() {
         fontFamily: "Marcellus, serif",
       }}
     >
+      {/* ---- Ingredients Section ---- */}
       <section style={{ marginBottom: "50px" }}>
-        <h1
-          style={{
-            fontSize: "1.8rem",
-            fontWeight: "bold",
-            color: "#324a34",
-            textAlign: "center",
-            marginBottom: "25px",
-          }}
-        >
+        <h1 style={{
+          fontSize: "1.8rem",
+          fontWeight: "bold",
+          color: "#324a34",
+          textAlign: "center",
+          marginBottom: "25px",
+        }}>
           Ingredients
         </h1>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            maxWidth: "700px",
-            margin: "0 auto",
-            width: "100%",
-          }}
-        >
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+          maxWidth: "700px",
+          margin: "0 auto",
+          width: "100%",
+        }}>
           {ingredients.length > 0 ? (
             ingredients.map(item => (
               <IngredientItem
                 key={item.name}
                 name={item.name}
                 quantity={item.quantity}
-                expDate={item.expDate}
+                expDate={item.expiration || null}
                 onDelete={() => handleDelete(item.name)}
                 onIncrease={() => handleIncrease(item.name)}
                 onDecrease={() => handleDecrease(item.name)}
@@ -113,19 +127,17 @@ export default function HomePage() {
           )}
         </div>
         {/* Add Ingredient Section */}
-        <div
-          style={{
-            marginTop: "40px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            maxWidth: "700px",
-            width: "100%",
-            margin: "0 auto",
-            borderTop: "2px solid #e0d6bd",
-            paddingTop: "25px"
-          }}
-        >
+        <div style={{
+          marginTop: "40px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          maxWidth: "700px",
+          width: "100%",
+          margin: "0 auto",
+          borderTop: "2px solid #e0d6bd",
+          paddingTop: "25px"
+        }}>
           <div style={{
             display: "flex",
             justifyContent: "space-between",
@@ -150,9 +162,10 @@ export default function HomePage() {
                 marginRight: "8px"
               }}
             />
-            <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-              <button
-                type="button"
+            <div style={{
+              display: "flex", alignItems: "center", gap: "2px"
+            }}>
+              <button type="button"
                 onClick={() => setNewQuantity(Math.max(1, newQuantity - 1))}
                 style={{
                   padding: "1px 5px",
@@ -164,25 +177,18 @@ export default function HomePage() {
                   fontSize: "1.15em",
                   cursor: "pointer",
                   minWidth: "22px",
-                }}
-              >
+                }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <rect x="6" y="11" width="12" height="2" rx="1" fill="#324a34"/>
                 </svg>
               </button>
               <span style={{
-                display: "inline-block",
-                width: "28px",
-                textAlign: "center",
-                fontWeight: "bold",
-                fontSize: "1.1em",
-                color: "#324a34",
-                background: "transparent"
+                display: "inline-block", width: "28px", textAlign: "center",
+                fontWeight: "bold", fontSize: "1.1em", color: "#324a34"
               }}>
                 {newQuantity}
               </span>
-              <button
-                type="button"
+              <button type="button"
                 onClick={() => setNewQuantity(newQuantity + 1)}
                 style={{
                   padding: "1px 5px",
@@ -194,8 +200,7 @@ export default function HomePage() {
                   fontSize: "1.15em",
                   cursor: "pointer",
                   minWidth: "22px",
-                }}
-              >
+                }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <rect x="6" y="11" width="12" height="2" rx="1" fill="#324a34"/>
                   <rect x="11" y="6" width="2" height="12" rx="1" fill="#324a34"/>
@@ -203,12 +208,8 @@ export default function HomePage() {
               </button>
             </div>
           </div>
-          {/* Expiration input and calendar picker to the right */}
           <div style={{
-            display: "flex",
-            alignItems: "center",
-            margin: "13px 0 0 0",
-            width: "100%"
+            display: "flex", alignItems: "center", margin: "13px 0 0 0", width: "100%"
           }}>
             <input
               ref={dateInputRef}
@@ -250,7 +251,6 @@ export default function HomePage() {
               </svg>
             </button>
           </div>
-          {/* Big Add button below */}
           <button
             onClick={handleAdd}
             style={{
@@ -264,12 +264,78 @@ export default function HomePage() {
               cursor: "pointer",
               transition: "0.2s ease",
               marginTop: "18px"
-            }}
-          >
+            }}>
             Add
           </button>
         </div>
       </section>
+      {/* Cooked Recipes Section */}
+      <section style={{ marginTop: "50px" }}>
+        <h2 style={{
+          fontSize: "1.25rem",
+          fontWeight: "bold",
+          color: "#324a34",
+          textAlign: "center",
+          marginBottom: "22px"
+        }}>Cooked Recipes</h2>
+        {cookedRecipes.length > 0 ? (
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "15px",
+            justifyContent: "center",
+            marginBottom: "28px"
+          }}>
+            {cookedRecipes.map((rec, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#f3ffe8",
+                  borderRadius: "14px",
+                  padding: "16px 19px",
+                  minWidth: 140,
+                  boxShadow: "0 1px 4px rgba(0,0,0,.10)",
+                  fontWeight: 550,
+                  color: "#324a34",
+                  fontSize: "1.09em",
+                  cursor: "pointer"
+                }}
+                onClick={() => setSelectedCookedRecipe(rec)}
+              >
+                {rec.name}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ color: "#888", textAlign: "center" }}>No recipes cooked yet.</div>
+        )}
+      </section>
+
+      {/* Modal for cooked recipe details */}
+      <Modal
+        show={!!selectedCookedRecipe}
+        onClose={() => setSelectedCookedRecipe(null)}
+      >
+        {selectedCookedRecipe && (
+          <div>
+            <h2 style={{ fontWeight: 700, color: "#46503d" }}>{selectedCookedRecipe.name}</h2>
+            {selectedCookedRecipe.image_url &&
+              <img src={selectedCookedRecipe.image_url} alt={selectedCookedRecipe.name}
+                style={{ width: "100%", borderRadius: 12, marginBottom: 13, maxHeight: 170, objectFit: "cover" }}
+              />}
+            <h4>Ingredients</h4>
+            <ul>
+              {selectedCookedRecipe.ingredients.map((ing, idx) =>
+                <li key={idx}>{ing.item}: {ing.quantity}</li>
+              )}
+            </ul>
+            <h4>Instructions</h4>
+            <div style={{whiteSpace: "pre-line", fontSize: "1.02em"}}>
+              {selectedCookedRecipe.instructions}
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

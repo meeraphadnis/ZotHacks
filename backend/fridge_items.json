@@ -1,7 +1,1 @@
-[
-  {
-    "name": "Bananas",
-    "quantity": 4,
-    "expiration": "2025-11-12"
-  }
-]
+[{"name": "Roasted Chicken", "quantity": 1, "expiration": "2025-11-10"}, {"name": "Shredded Salad Mix", "quantity": 1, "expiration": "2025-11-12"}, {"name": "Large Tomatoes", "quantity": 6, "expiration": "2025-11-18"}, {"name": "Cherry Tomatoes", "quantity": 15, "expiration": "2025-11-17"}]

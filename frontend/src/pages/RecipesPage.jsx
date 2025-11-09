@@ -5,13 +5,20 @@ export default function RecipesPage() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCooking, setIsCooking] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/recipes")
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to load recipes.");
-        return res.json();
-      })
+    // Fetch fridge items, POST to generate recipes with Gemini, display
+    fetch("http://localhost:8000/api/fridge-items")
+      .then(res => res.json())
+      .then(ingredients => 
+        fetch("http://localhost:8000/get-recipes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ingredients)
+        })
+      )
+      .then(res => res.json())
       .then(data => {
         setRecipes(data.recipes || []);
         setLoading(false);
@@ -21,6 +28,39 @@ export default function RecipesPage() {
         alert("Could not load recipes: " + err.message);
       });
   }, []);
+
+  const handleCooked = (recipe) => {
+    setIsCooking(true);
+    fetch("http://localhost:8000/api/cooked-recipes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(recipe)
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Could not save recipe (backend error)");
+        return res.json();
+      })
+      .then(() => {
+        setIsCooking(false);
+        setSelectedRecipe(null);
+        // Re-generate recipe list after marking as cooked
+        fetch("http://localhost:8000/api/fridge-items")
+          .then(res => res.json())
+          .then(ingredients =>
+            fetch("http://localhost:8000/get-recipes", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(ingredients)
+            })
+          )
+          .then(res => res.json())
+          .then(data => setRecipes(data.recipes || []));
+      })
+      .catch(() => {
+        setIsCooking(false);
+        alert("Could not save recipe");
+      });
+  };
 
   return (
     <div
@@ -65,7 +105,12 @@ export default function RecipesPage() {
           </div>
         ))}
       </div>
-      <Modal show={!!selectedRecipe} onClose={() => setSelectedRecipe(null)}>
+      <Modal 
+        show={!!selectedRecipe}
+        onClose={() => setSelectedRecipe(null)}
+        recipe={selectedRecipe}
+        onCooked={handleCooked}
+      >
         {selectedRecipe && (
           <div>
             <h2 style={{
@@ -91,6 +136,7 @@ export default function RecipesPage() {
             <div style={{whiteSpace: "pre-line", fontSize: "1.02em"}}>
               {selectedRecipe.instructions}
             </div>
+            {isCooking && <p style={{ color: "#46503d",marginTop:12 }}>Saving...</p>}
           </div>
         )}
       </Modal>
