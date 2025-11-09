@@ -55,14 +55,37 @@ const recipes = [
 
 
   return (
-    <div className="min-h-screen bg-[#e8deca] py-10 px-6">
-      <h1 className="text-4xl font-semibold text-[#46503d] mb-8 text-center [font-family:'Marcellus-Regular',Helvetica]">
-        Recipes
-      </h1>
+  <div
+  style={{
+    minHeight: "100vh",
+    width: "100%",
+    backgroundColor: "#e8deca",
+    padding: "2.5rem 1.5rem",
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // centers all child content horizontally
+  }}
+>
+  <div className="w-full flex justify-center mb-8">
+    <h1
+  style={{
+    fontSize: "2.5rem",       // text-4xl equivalent
+    fontWeight: "600",        // font-semibold
+    color: "#46503d",
+    fontFamily: "'Marcellus-Regular'",
+    textAlign: "center",      // centers horizontally
+    marginBottom: "2rem",     // spacing below
+  }}
+>
+  Recipes
+</h1>
 
-      <div className="max-w-[260px]-6xl mx-auto">
-        <Recipes recipes={recipes} />
-      </div>
-    </div>
+  </div>
+
+  <div className="max-w-6xl mx-auto">
+    <Recipes recipes={recipes} />
+  </div>
+</div>
   );
 };
