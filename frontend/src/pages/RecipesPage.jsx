@@ -1,10 +1,10 @@
+// src/pages/RecipesPage.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import dish1 from "../assets/dish1.jpg";
 import dish2 from "../assets/dish2.jpg";
 import dish3 from "../assets/dish3.jpg";
-
-import { Recipes } from "../components/Recipes"; // make sure path and filename is correct
+import { Recipes } from "../components/Recipes";
 
 export const RecipesPage = () => {
   const navigate = useNavigate();
@@ -12,11 +12,11 @@ export const RecipesPage = () => {
   const recipes = [
     {
       id: 1,
-      name: "Honey Dijon Salmom",
+      name: "Honey Dijon Salmon",
       calories: 450,
       cookTime: "45 min",
       image: dish1,
-      description: "n/a",
+      description: "Delicious honey mustard glazed salmon.",
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ export const RecipesPage = () => {
       calories: 500,
       cookTime: "30 min",
       image: dish2,
-      description: "n/A",
+      description: "Juicy beef burger with cheese and lettuce.",
     },
     {
       id: 3,
@@ -32,27 +32,19 @@ export const RecipesPage = () => {
       calories: 700,
       cookTime: "45 min",
       image: dish3,
-      description: "Crispy toast topped with smashed avocado and poached egg.",
+      description: "Cheesy pizza with tomato sauce and toppings.",
     },
   ];
-
-  const handleViewRecipe = (recipeId) => {
-    navigate(`/recipe/${recipeId}`);
-  };
 
   return (
     <div className="min-h-screen bg-[#e8deca] py-10 px-6">
       <h1 className="text-4xl font-semibold text-[#46503d] mb-8 text-center [font-family:'Marcellus-Regular',Helvetica]">
+        Recipes
       </h1>
-      style={{
-              width: "100vw",
-              minHeight: "100vh",
-              backgroundColor: "#E8DECA",
-              padding: 20,
-              boxSizing: "border-box",
-              fontFamily: "Marcellus, serif",
-            }}
-      <Recipes recipes={recipes} onRecipeClick={handleViewRecipe} />
+
+      <div className="max-w-[260px]-6xl mx-auto">
+        <Recipes recipes={recipes} />
+      </div>
     </div>
   );
 };
