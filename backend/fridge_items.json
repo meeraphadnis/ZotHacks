@@ -1,10 +1,86 @@
 {
-  "Black Beans (Dried)": "2024-12-31",
-  "Red Lentils (Dried)": "2024-12-31",
-  "Spaghetti/Pasta (Dried)": "2024-12-31",
-  "Canned Chunk Chicken Breast (2 cans)": "2024-12-31",
-  "Red Curry Paste": "2024-12-31",
-  "Canned Garbanzo Beans (Chickpeas)": "2024-12-31",
-  "Saffron Road Prepared Meal Pouch": "2024-12-31",
-  "Organic Millet & Brown Rice Ramen Noodles": "2024-12-31"
+  "Asparagus": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Strawberries (Frozen)": {
+    "quantity": 1,
+    "expiration date": "2025-01-01"
+  },
+  "Celery Sticks": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Soda Cans (Red)": {
+    "quantity": 7,
+    "expiration date": "2025-01-01"
+  },
+  "Protein Shakes": {
+    "quantity": 2,
+    "expiration date": "2024-08-30"
+  },
+  "Greek Yogurt": {
+    "quantity": 2,
+    "expiration date": "2024-07-20"
+  },
+  "Snack Dips/Containers": {
+    "quantity": 4,
+    "expiration date": "2024-07-25"
+  },
+  "Feta Cheese": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Eggs": {
+    "quantity": 12,
+    "expiration date": "2024-07-20"
+  },
+  "Red Grapes": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Snap Peas": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Carrot Sticks": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Yogurt Tubes/Pops (Packs)": {
+    "quantity": 2,
+    "expiration date": "2024-08-30"
+  },
+  "Cherries": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Sliced Lemon": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Mozzarella Balls (Bocconcini)": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Blueberries": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  },
+  "Green Bell Peppers": {
+    "quantity": 3,
+    "expiration date": "2024-07-20"
+  },
+  "Orange Bell Peppers": {
+    "quantity": 3,
+    "expiration date": "2024-07-20"
+  },
+  "Mixed Greens/Salad Mix": {
+    "quantity": 2,
+    "expiration date": "2024-07-18"
+  },
+  "Milk (Gallon)": {
+    "quantity": 1,
+    "expiration date": "2024-07-20"
+  }
 }

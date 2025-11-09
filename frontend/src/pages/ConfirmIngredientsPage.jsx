@@ -1,36 +1,76 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ConfirmIngredientsPage() {
-  const location = useLocation();
   const navigate = useNavigate();
+  const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const images = location.state?.images || [];
+  // Fetch ingredients from backend
+  useEffect(() => {
+    async function fetchIngredients() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/files/fridge_items");
+        if (!response.ok) throw new Error("Failed to fetch");
+        const data = await response.json();
+        // If data is a dictionary, convert to array
+        const list = Array.isArray(data) ? data : Object.entries(data).map(([name, info]) => ({
+          name,
+          ...info
+        }));
+        setIngredients(list);
+      } catch (err) {
+        console.error("Error fetching ingredients:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchIngredients();
+  }, []);
 
-  // Mocked ingredients from "backend"
-  const initialIngredients = images.map((img, index) => ({
-    id: index,
-    name: `Ingredient ${index + 1}`,
-    expiration: "Expires: ~7 days",
-  }));
-
-  const [ingredients, setIngredients] = useState(initialIngredients);
-  const [newIngredient, setNewIngredient] = useState("");
-
-  const addIngredient = () => {
-    if (!newIngredient.trim()) return;
-    setIngredients((prev) => [
-      ...prev,
-      { id: prev.length, name: newIngredient, expiration: "Unknown" },
-    ]);
-    setNewIngredient("");
+  // Quantity handlers
+  const increaseQty = (index) => {
+    setIngredients((prev) =>
+      prev.map((ing, i) =>
+        i === index ? { ...ing, quantity: (ing.quantity || 0) + 1 } : ing
+      )
+    );
   };
 
-  const handleConfirm = () => {
-    // TODO: send ingredients to backend or process further
-    console.log("Final ingredients:", ingredients);
-    navigate("/potentialrecipes", { state: { ingredients } });
+  const decreaseQty = (index) => {
+    setIngredients((prev) =>
+      prev.map((ing, i) =>
+        i === index && (ing.quantity || 0) > 0
+          ? { ...ing, quantity: ing.quantity - 1 }
+          : ing
+      )
+    );
   };
+
+  const removeIngredient = (index) => {
+    setIngredients((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleConfirm = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/files/update_ingredients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ingredients),
+      });
+      if (!response.ok) throw new Error("Failed to update ingredients");
+      const data = await response.json();
+      console.log("Updated ingredients:", data);
+      navigate("/potentialrecipes", { state: { ingredients } });
+    } catch (err) {
+      console.error("Error sending updated ingredients:", err);
+    }
+  };
+
+  if (loading) return <p>Loading ingredients...</p>;
+  if (error) return <p>Could not load ingredients. Try again.</p>;
 
   return (
     <div
@@ -39,7 +79,6 @@ export default function ConfirmIngredientsPage() {
         minHeight: "100vh",
         backgroundColor: "#E8DECA",
         padding: 20,
-        boxSizing: "border-box",
         fontFamily: "Marcellus, serif",
       }}
     >
@@ -48,9 +87,9 @@ export default function ConfirmIngredientsPage() {
       </h2>
 
       <ul style={{ listStyle: "none", padding: 0 }}>
-        {ingredients.map((ing) => (
+        {ingredients.map((ing, index) => (
           <li
-            key={ing.id}
+            key={index}
             style={{
               padding: "10px 15px",
               marginBottom: 10,
@@ -58,37 +97,58 @@ export default function ConfirmIngredientsPage() {
               borderRadius: 8,
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <span>{ing.name}</span>
-            <span style={{ color: "#6EBF8B" }}>{ing.expiration}</span>
+            <div>
+              <strong>{ing.name}</strong>
+              <p style={{ margin: 0, color: "#6EBF8B" }}>
+                Exp: {ing.expiration || "N/A"}
+              </p>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button
+                onClick={() => decreaseQty(index)}
+                style={{
+                  background: "#FF9F9F",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 28,
+                  height: 28,
+                  cursor: "pointer",
+                }}
+              >
+                −
+              </button>
+              <span>{ing.quantity || 0}</span>
+              <button
+                onClick={() => increaseQty(index)}
+                style={{
+                  background: "#6EBF8B",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 28,
+                  height: 28,
+                  cursor: "pointer",
+                }}
+              >
+                +
+              </button>
+              <button
+                onClick={() => removeIngredient(index)}
+                style={{
+                  background: "transparent",
+                  color: "gray",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                ✕
+              </button>
+            </div>
           </li>
         ))}
       </ul>
-
-      {/* Add custom ingredient */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-        <input
-          type="text"
-          value={newIngredient}
-          onChange={(e) => setNewIngredient(e.target.value)}
-          placeholder="Add ingredient"
-          style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #b4eac7ff", backgroundColor: "#b4eac7ff"}}
-        />
-        <button
-          onClick={addIngredient}
-          style={{
-            backgroundColor: "#6EBF8B",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            padding: "10px 20px",
-            cursor: "pointer",
-          }}
-        >
-          Add
-        </button>
-      </div>
 
       <button
         onClick={handleConfirm}
