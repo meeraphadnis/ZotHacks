@@ -29,7 +29,7 @@ export default function ConfirmIngredientsPage() {
   const handleConfirm = () => {
     // TODO: send ingredients to backend or process further
     console.log("Final ingredients:", ingredients);
-    navigate("/potentialrecipes", { state: { ingredients } });
+    navigate("/recipes", { state: { ingredients } });
   };
 
   return (
