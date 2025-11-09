@@ -9,10 +9,11 @@ export default function ConfirmIngredientsPage() {
 
   // Mocked ingredients from "backend"
   const initialIngredients = images.map((img, index) => ({
-    id: index,
-    name: `Ingredient ${index + 1}`,
-    expiration: "Expires: ~7 days",
-  }));
+  id: index,
+  name: `Ingredient ${index + 1}`,
+  expiration: "Expires: ~7 days",
+}));
+
 
   const [ingredients, setIngredients] = useState(initialIngredients);
   const [newIngredient, setNewIngredient] = useState("");
