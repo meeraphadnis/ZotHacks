@@ -1,6 +1,9 @@
 import random
 from fastapi import FastAPI
 from upload import router as upload_router
+import json
+from fastapi.responses import PlainTextResponse
+
 
 app = FastAPI()
 
@@ -18,3 +21,9 @@ async def get_random_item(maximum: int) -> dict[str, int]:
 @app.get("/test")
 async def test_endpoint() -> dict[str, str]:
     return {"status": "Test endpoint is working!"}
+
+@app.get("/api/fridge-items")
+async def get_fridge_items():
+    with open("../fridge_items.json") as f:
+        data = json.load(f)
+    return data  # FastAPI will send this as a JSON response

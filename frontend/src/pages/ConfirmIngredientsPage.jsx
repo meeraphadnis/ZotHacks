@@ -2,20 +2,24 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ConfirmIngredientsPage() {
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const images = location.state?.images || [];
-
-  // Mocked ingredients from "backend"
-  const initialIngredients = images.map((img, index) => ({
-    id: index,
-    name: `Ingredient ${index + 1}`,
-    expiration: "Expires: ~7 days",
-  }));
-
-  const [ingredients, setIngredients] = useState(initialIngredients);
+  const [ingredients, setIngredients] = useState([]);
   const [newIngredient, setNewIngredient] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/fridge-items")
+      .then(res => res.json())
+      .then(data => {
+        const loadedIngredients = Object.entries(data).map(
+          ([name, expiration], idx) => ({
+            id: idx,
+            name,
+            expiration,
+          })
+        );
+        setIngredients(loadedIngredients);
+      });
+  }, []);
 
   const addIngredient = () => {
     if (!newIngredient.trim()) return;
