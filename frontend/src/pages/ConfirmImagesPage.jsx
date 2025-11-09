@@ -7,7 +7,6 @@ export default function ConfirmImagesPage() {
   const navigate = useNavigate();
   const initialImages = location.state?.images || [];
 
-  // Store images with id and selected flag
   const [images, setImages] = useState(
     initialImages.map((img, index) => ({ id: index, src: img, selected: false }))
   );
@@ -22,10 +21,48 @@ export default function ConfirmImagesPage() {
     setImages((prev) => prev.filter((img) => !img.selected));
   };
 
+  // ✅ NEW: Send selected image(s) to Gemini
+  const handleAnalyze = async (selectedImages) => {
+    try {
+      // For now, just analyze the first selected image
+      const imageToAnalyze = selectedImages[0];
+      if (!imageToAnalyze) {
+        alert("Please select at least one image.");
+        return;
+      }
+
+      // Convert base64 or blob URL → actual file
+      const response = await fetch(imageToAnalyze.src);
+      const blob = await response.blob();
+      const file = new File([blob], "fridge.jpg", { type: blob.type });
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadResponse = await fetch("http://127.0.0.1:8000/files/analyze", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to analyze image");
+      }
+
+      const data = await uploadResponse.json();
+      console.log("Gemini result:", data);
+
+      // Once analysis is done, go to ConfirmIngredientsPage
+      navigate("/confirmingredients");
+    } catch (err) {
+      console.error("Error analyzing image:", err);
+      alert("Something went wrong while analyzing the image.");
+    }
+  };
+
+  // ✅ Updated Confirm button
   const handleConfirm = () => {
-    navigate("/confirmingredients", {
-      state: { images: images.map((img) => img.src) },
-    });
+    const selected = images.filter((img) => img.selected);
+    handleAnalyze(selected);
   };
 
   return (
@@ -55,7 +92,7 @@ export default function ConfirmImagesPage() {
             style={{
               position: "relative",
               width: "100%",
-              paddingBottom: "100%", // make square container
+              paddingBottom: "100%",
               border: img.selected ? "4px solid #6EBF8B" : "2px solid #ccc",
               borderRadius: 12,
               overflow: "hidden",
@@ -75,32 +112,31 @@ export default function ConfirmImagesPage() {
                 objectFit: "cover",
               }}
             />
-                {/* Circular checkbox */}
+            {/* Circular checkbox */}
             <div
-            onClick={() => toggleSelect(img.id)}
-            style={{
+              onClick={() => toggleSelect(img.id)}
+              style={{
                 position: "absolute",
                 top: 5,
                 right: 5,
                 width: 24,
                 height: 24,
                 borderRadius: "50%",
-                border: "2px solid #6EBF8B", // outline circle
-                backgroundColor: img.selected ? "#6EBF8B" : "transparent", // filled if selected
+                border: "2px solid #6EBF8B",
+                backgroundColor: img.selected ? "#6EBF8B" : "transparent",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-            }}
+              }}
             >
-            {img.selected && <Check size={16} color="#E8DECA" />}
+              {img.selected && <Check size={16} color="#E8DECA" />}
             </div>
-        </div>
+          </div>
         ))}
-
       </div>
 
-      {/* Bottom buttons (fixed) */}
+      {/* Bottom buttons */}
       <div
         style={{
           position: "fixed",
