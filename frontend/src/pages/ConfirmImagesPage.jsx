@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Check } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 export default function ConfirmImagesPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const initialImages = location.state?.images || [];
 
-  // Store images with id and selected flag
   const [images, setImages] = useState(
     initialImages.map((img, index) => ({ id: index, src: img, selected: false }))
   );
+  const [loading, setLoading] = useState(false);
 
   const toggleSelect = (id) => {
     setImages((prev) =>
@@ -18,14 +19,56 @@ export default function ConfirmImagesPage() {
     );
   };
 
+  const selectAllImages = () => {
+    setImages((prev) => prev.map((img) => ({ ...img, selected: true })));
+  };
+
   const handleDelete = () => {
     setImages((prev) => prev.filter((img) => !img.selected));
   };
 
+  // ✅ NEW: Send selected image(s) to Gemini
+  const handleAnalyze = async (selectedImages) => {
+    try {
+      // For now, just analyze the first selected image
+      const imageToAnalyze = selectedImages[0];
+      if (!imageToAnalyze) {
+        alert("Please select at least one image.");
+        return;
+      }
+
+      // Convert base64 or blob URL → actual file
+      const response = await fetch(imageToAnalyze.src);
+      const blob = await response.blob();
+      const file = new File([blob], "fridge.jpg", { type: blob.type });
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadResponse = await fetch("http://127.0.0.1:8000/files/analyze", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to analyze image");
+      }
+
+      const data = await uploadResponse.json();
+      console.log("Gemini result:", data);
+
+      // Once analysis is done, go to ConfirmIngredientsPage
+      navigate("/confirmingredients");
+    } catch (err) {
+      console.error("Error analyzing image:", err);
+      alert("Something went wrong while analyzing the image.");
+    }
+  };
+
+  // ✅ Updated Confirm button
   const handleConfirm = () => {
-    navigate("/confirmingredients", {
-      state: { images: images.map((img) => img.src) },
-    });
+    const selected = images.filter((img) => img.selected);
+    handleAnalyze(selected);
   };
 
   return (
@@ -37,9 +80,20 @@ export default function ConfirmImagesPage() {
         padding: "20px",
         boxSizing: "border-box",
         fontFamily: "Marcellus, serif",
+        position: "relative",
       }}
     >
-      <h2 style={{ textAlign: "center", marginBottom: 20 }}>Confirm Your Images</h2>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
+        <button
+          onClick={() => navigate("/add")}
+          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", marginRight: 10 }}
+        >
+          <ArrowLeft size={28} color="#7A6D5F" />
+        </button>
+        <h2 style={{ flex: 1, textAlign: "center", margin: 0 }}>Confirm Your Images</h2>
+        <div style={{ width: 38 }} />
+      </div>
 
       {/* Images grid */}
       <div
@@ -55,7 +109,7 @@ export default function ConfirmImagesPage() {
             style={{
               position: "relative",
               width: "100%",
-              paddingBottom: "100%", // make square container
+              paddingBottom: "100%",
               border: img.selected ? "4px solid #6EBF8B" : "2px solid #ccc",
               borderRadius: 12,
               overflow: "hidden",
@@ -66,41 +120,33 @@ export default function ConfirmImagesPage() {
             <img
               src={img.src}
               alt="uploaded"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }}
             />
-                {/* Circular checkbox */}
+            {/* Circular checkbox */}
             <div
-            onClick={() => toggleSelect(img.id)}
-            style={{
+              onClick={() => toggleSelect(img.id)}
+              style={{
                 position: "absolute",
                 top: 5,
                 right: 5,
                 width: 24,
                 height: 24,
                 borderRadius: "50%",
-                border: "2px solid #6EBF8B", // outline circle
-                backgroundColor: img.selected ? "#6EBF8B" : "transparent", // filled if selected
+                border: "2px solid #6EBF8B",
+                backgroundColor: img.selected ? "#6EBF8B" : "transparent",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-            }}
+              }}
             >
-            {img.selected && <Check size={16} color="#E8DECA" />}
+              {img.selected && <Check size={16} color="#E8DECA" />}
             </div>
-        </div>
+          </div>
         ))}
-
       </div>
 
-      {/* Bottom buttons (fixed) */}
+      {/* Bottom buttons */}
       <div
         style={{
           position: "fixed",
@@ -108,38 +154,46 @@ export default function ConfirmImagesPage() {
           left: "50%",
           transform: "translateX(-50%)",
           display: "flex",
-          gap: 20,
+          flexDirection: "column",
+          gap: 10,
+          alignItems: "center",
         }}
       >
         <button
-          onClick={handleDelete}
+          onClick={selectAllImages}
           style={{
-            backgroundColor: "#E27D60",
+            backgroundColor: "#9088888B",
             color: "#fff",
             border: "none",
             borderRadius: 12,
             padding: "12px 24px",
             cursor: "pointer",
             fontSize: 16,
+            width: 250,
+            textAlign: "center",
           }}
         >
-          Delete Selected
+          Select All Images
         </button>
-        <button
-          onClick={handleConfirm}
-          style={{
-            backgroundColor: "#6EBF8B",
-            color: "#fff",
-            border: "none",
-            borderRadius: 12,
-            padding: "12px 24px",
-            cursor: "pointer",
-            fontSize: 16,
-          }}
-        >
-          Confirm
-        </button>
+
+        <div style={{ display: "flex", gap: 20 }}>
+          <button
+            onClick={handleDelete}
+            style={{ backgroundColor: "#E27D60", color: "#fff", border: "none", borderRadius: 12, padding: "12px 24px", cursor: "pointer", fontSize: 16 }}
+          >
+            Delete Selected
+          </button>
+          <button
+            onClick={handleConfirm}
+            style={{ backgroundColor: "#6EBF8B", color: "#fff", border: "none", borderRadius: 12, padding: "12px 24px", cursor: "pointer", fontSize: 16 }}
+          >
+            Confirm
+          </button>
+        </div>
       </div>
+
+      {/* Loading overlay */}
+      <LoadingOverlay visible={loading} />
     </div>
   );
 }
